@@ -14,6 +14,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     @IBOutlet weak var foodNameLabel: UILabel!
     @IBOutlet weak var foodNameTextField: UITextField!
     @IBOutlet weak var photoImageView: UIImageView!
+    @IBOutlet weak var ratingControl: RatingControl!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,9 +23,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     }
 
     //MARK: Actions
-    @IBAction func setDefaultText(_ sender: UIButton) {
-        foodNameLabel.text = "Default Text"
-    }
     @IBAction func selectImageFromPhotos(_ sender: UITapGestureRecognizer) {
         //Hide the keyboard
         foodNameTextField.resignFirstResponder()
