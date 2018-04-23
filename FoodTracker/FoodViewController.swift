@@ -23,12 +23,29 @@ class FoodViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         super.viewDidLoad()
         //Handle the text field's user input through delegate callbacks
         foodNameTextField.delegate = self
+        
+        if let food = food {
+            navigationItem.title = food.name
+            foodNameTextField.text = food.name
+            photoImageView.image = food.photo
+            ratingControl.rating = food.rating
+        }
+        
         updateSaveButtonState()
     }
 
     //Navigation
     @IBAction func cancel(_ sender: UIBarButtonItem) {
-        dismiss(animated: true, completion: nil)
+        let isPresentingInAddFoodMode = presentingViewController is UINavigationController
+        if isPresentingInAddFoodMode{
+            dismiss(animated: true, completion: nil)
+        }
+        else if let owningNavigationController = navigationController{
+            owningNavigationController.popViewController(animated: true)
+        }
+        else {
+            fatalError("The FoodViewController is not inside a navigation controller")
+        }
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)

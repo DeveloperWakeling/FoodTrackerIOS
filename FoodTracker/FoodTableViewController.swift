@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import os.log
+
 
 class FoodTableViewController: UITableViewController {
 
@@ -17,6 +19,8 @@ class FoodTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        navigationItem.leftBarButtonItem = editButtonItem
+        
         loadSampleFoods()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -56,25 +60,26 @@ class FoodTableViewController: UITableViewController {
     }
  
 
-    /*
+    
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
-    */
+    
 
-    /*
+    
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
+            foods.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
-    */
+    
 
     /*
     // Override to support rearranging the table view.
@@ -91,24 +96,51 @@ class FoodTableViewController: UITableViewController {
     }
     */
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        
+        super.prepare(for: segue, sender: sender)
+        switch(segue.identifier ?? ""){
+            case "AddItem":
+                os_log("Adding Item", log: OSLog.default, type: .debug)
+            
+            case "ShowDetail":
+                guard let foodDetailViewController = segue.destination as? FoodViewController else {
+                    fatalError("Unexpected Destination \(segue.destination)")
+                }
+                guard let selectedFoodCell = sender as? FoodTableViewCell else {
+                    fatalError("Unexpected Sender \(sender)")
+                }
+                guard let indexPath = tableView.indexPath(for: selectedFoodCell) else {
+                    fatalError("The selected cell is not being displayed by the table")
+                }
+                let selectedFood = foods[indexPath.row]
+                foodDetailViewController.food = selectedFood
+            
+            default:
+                fatalError("Unexpected Segue Identifier \(segue.identifier)")
+            }
     }
-    */
+    
 
     //MARK: Actions
     @IBAction func unwindToFoodList(sender:UIStoryboardSegue) {
         if let sourceViewController = sender.source as? FoodViewController, let food = sourceViewController.food {
-            //Add new food
-            let newIndexPath = IndexPath(row: foods.count, section: 0)
-            foods.append(food)
-            
-            tableView.insertRows(at: [newIndexPath], with: .automatic)
+            if let selectedIndexPath = tableView.indexPathForSelectedRow {
+                //Update existing food
+                foods[selectedIndexPath.row] = food
+                tableView.reloadRows(at: [selectedIndexPath], with: .none)
+            }
+            else {
+                
+                //Add new food
+                let newIndexPath = IndexPath(row: foods.count, section: 0)
+                foods.append(food)
+                tableView.insertRows(at: [newIndexPath], with: .automatic)
+            }
         }
     }
     
