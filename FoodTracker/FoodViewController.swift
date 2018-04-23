@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  FoodViewController.swift
 //  FoodTracker
 //
 //  Created by Michael Wakeling on 4/21/18.
@@ -7,21 +7,39 @@
 //
 
 import UIKit
+import os.log
 
-class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class FoodViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     //MARK: Properties
-    @IBOutlet weak var foodNameLabel: UILabel!
     @IBOutlet weak var foodNameTextField: UITextField!
     @IBOutlet weak var photoImageView: UIImageView!
     @IBOutlet weak var ratingControl: RatingControl!
+    @IBOutlet weak var saveButton: UIBarButtonItem!
+    
+    var food: Food?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         //Handle the text field's user input through delegate callbacks
         foodNameTextField.delegate = self
+        updateSaveButtonState()
     }
 
+    //Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        guard let button = sender as? UIBarButtonItem, button === saveButton else {
+            os_log("The save button was not pressed, cancelling", log: OSLog.default, type: .debug)
+            return
+        }
+        let name = foodNameTextField.text ?? ""
+        let photo = photoImageView.image
+        let rating = ratingControl.rating
+        
+        food = Food(name: name, photo: photo, rating: rating)
+    }
+    
     //MARK: Actions
     @IBAction func selectImageFromPhotos(_ sender: UITapGestureRecognizer) {
         //Hide the keyboard
@@ -53,6 +71,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     }
     
     //MARK: UITextFieldDelegate
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        saveButton.isEnabled = false
+    }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         //Basically once the textfield's focus has been ended
         textField.resignFirstResponder()
@@ -61,8 +83,15 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         //Gets called after the textfield removes its firstResponder (loses focus)
-        foodNameLabel.text = textField.text
+        updateSaveButtonState()
+        navigationItem.title = textField.text
     }
 
+    //MARK: Private Methods
+    private func updateSaveButtonState() {
+        //Disable the save button if the textfield is empty
+        let text = foodNameTextField.text ?? ""
+        saveButton.isEnabled = !text.isEmpty
+    }
 }
 
