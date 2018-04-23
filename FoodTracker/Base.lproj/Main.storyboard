@@ -4,7 +4,6 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -123,7 +122,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="New Food" id="fp6-7q-jYy">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="p2r-Ap-iwI"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="p2r-Ap-iwI">
+                            <connections>
+                                <action selector="cancel:" destination="BYZ-38-t0r" id="Mbk-ln-U4P"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="save" id="9wH-cu-naR">
                             <connections>
                                 <segue destination="9Ji-3N-2Kd" kind="unwind" unwindAction="unwindToFoodListWithSender:" id="dgV-rk-uDK"/>
@@ -145,7 +148,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1353.5" y="90.5"/>
+            <point key="canvasLocation" x="1796" y="91"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="wOn-8k-Dkj">
@@ -181,7 +184,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ooJ-Zb-Uy8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="766.5" y="90.5"/>
+            <point key="canvasLocation" x="922" y="91"/>
         </scene>
     </scenes>
     <resources>
