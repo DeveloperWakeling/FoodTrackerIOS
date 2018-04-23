@@ -21,6 +21,13 @@ class FoodTableViewController: UITableViewController {
 
         navigationItem.leftBarButtonItem = editButtonItem
         
+        if let savedFood = loadFoods() {
+            foods += savedFood
+        }
+        else{
+            loadSampleFoods()
+        }
+        
         loadSampleFoods()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -74,10 +81,11 @@ class FoodTableViewController: UITableViewController {
         if editingStyle == .delete {
             // Delete the row from the data source
             foods.remove(at: indexPath.row)
+            saveFoods()
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+        }
     }
     
 
@@ -141,12 +149,27 @@ class FoodTableViewController: UITableViewController {
                 foods.append(food)
                 tableView.insertRows(at: [newIndexPath], with: .automatic)
             }
+            saveFoods()
         }
     }
     
     //MARK: Private Methods
     private func loadSampleFoods () {
         print("Loaded Sample Meals")
+    }
+    
+    private func saveFoods() {
+        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(foods, toFile: Food.ArchiveURL.path)
+        
+        if isSuccessfulSave {
+            os_log("Meals Successfully saved", log: OSLog.default, type: .debug)
+        } else {
+            os_log("Meals failed to save", log: OSLog.default, type: .error)
+        }
+    }
+    
+    private func loadFoods() -> [Food]? {
+        return NSKeyedUnarchiver.unarchiveObject(withFile: Food.ArchiveURL.path) as? [Food]
     }
     
 }
